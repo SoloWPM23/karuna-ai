@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+.venv/
+env/
+venv/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Data & sessions (jangan commit data user)
+data/sessions/*.json
+
+# Demo (tidak diperlukan untuk API deployment)
+demo/
+
+# Docker local config
+docker/
+
+# Tests (opsional, tidak diperlukan di Spaces)
+tests/
+
+# Training data
+s2_emotion/data/
+s3_crisis/data/
+
+# Byte-compiled / cached
+*.pyc
+*.pyo

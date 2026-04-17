@@ -1,0 +1,16 @@
+services:
+  - type: web
+    name: karuna-api
+    env: python
+    buildCommand: pip install -r requirements-api.txt
+    startCommand: uvicorn api.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: GROQ_API_KEY
+        sync: false
+      - key: ELEVENLABS_API_KEY
+        sync: false
+      - key: API_KEY_ENABLED
+        value: "false"
+        sync: false
+    autoDeploy: true
+    plan: free
