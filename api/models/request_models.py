@@ -17,6 +17,7 @@ class ChatResponse(BaseModel):
     session_id: str
     message_count: int
     crisis_banner: str = ""
+    validator_note: str = ""
 
 
 class EmotionRequest(BaseModel):
@@ -41,6 +42,12 @@ class CrisisResponse(BaseModel):
     level: str
     score: float
     triggers: List[str]
+    layer1_level: Optional[str] = None
+    layer1_confidence: Optional[float] = None
+    layer2_label: Optional[str] = None
+    layer2_confidence: Optional[float] = None
+    layer3_score: Optional[float] = None
+    layer3_patterns: Optional[List[str]] = None
     detail: Optional[Dict] = None
 
 
@@ -49,7 +56,10 @@ class SummaryResponse(BaseModel):
     summary: str
     flag: str
     flag_reasoning: str
+    pesan_penutup: str
     tren_distress: str
+    distress_awal: float
+    distress_akhir: float
     jumlah_pesan: int
 
 
@@ -58,6 +68,9 @@ class TTSRequest(BaseModel):
     voice: str = "sarah"
     mood: Optional[str] = None
     speed: float = Field(default=1.0, ge=0.5, le=2.0)
+    stability: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    similarity_boost: Optional[float] = Field(default=None, ge=0.0, le=1.0)
+    style: Optional[float] = Field(default=None, ge=0.0, le=1.0)
 
 
 class TTSResponse(BaseModel):

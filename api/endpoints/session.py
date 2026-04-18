@@ -28,6 +28,7 @@ class EndSessionResponse(BaseModel):
     summary: str
     flag: str
     flag_reasoning: str
+    pesan_penutup: str
     emotion_timeline: list
     cds_level: str
 
@@ -95,10 +96,12 @@ async def end_session(request: EndSessionRequest):
         summary=summary.paragraf,
         flag=summary.flag,
         flag_reasoning=summary.flag_reasoning,
+        pesan_penutup=summary.pesan_penutup,
         emotion_timeline=[
             {
                 "dominant": e.dominant,
-                "distress": e.distress_score
+                "distress": e.distress_score,
+                "topics": getattr(e, 'topics', [])
             }
             for e in orch.emotion_history
         ],
@@ -133,4 +136,43 @@ async def get_session(session_id: str):
             "level": orch.last_cds_result.level,
             "score": orch.last_cds_result.score
         } if orch.last_cds_result else None
+    }
+
+
+@router.delete("/session/{session_id}")
+async def delete_session(session_id: str):
+    """Hapus session dan semua datanya."""
+    from api.endpoints.chat import _sessions as chat_sessions
+
+    orch = _sessions.pop(session_id, None)
+    chat_sessions.pop(session_id, None)
+
+    if orch is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Session tidak ditemukan"
+        )
+
+    return {"session_id": session_id, "message": "Session berhasil dihapus"}
+
+
+@router.post("/session/{session_id}/reset")
+async def reset_session(session_id: str):
+    """Reset session - hapus history tapi pertahankan session ID."""
+    from api.endpoints.chat import _sessions as chat_sessions
+
+    orch = _sessions.get(session_id) or chat_sessions.get(session_id)
+
+    if orch is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Session tidak ditemukan"
+        )
+
+    orch.reset()
+
+    return {
+        "session_id": session_id,
+        "message": "Session berhasil direset",
+        "message_count": orch.msg_count
     }

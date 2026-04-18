@@ -66,11 +66,13 @@ async def chat(request: ChatRequest):
             crisis={
                 "level": result.cds_result.level,
                 "score": result.cds_result.score,
-                "triggers": result.cds_result.triggers
+                "triggers": result.cds_result.triggers,
+                "detail": result.cds_result.detail
             },
             session_id=session_id,
             message_count=orch.msg_count,
-            crisis_banner=result.crisis_banner
+            crisis_banner=result.crisis_banner,
+            validator_note=result.validator_note
         )
 
     except Exception as e:

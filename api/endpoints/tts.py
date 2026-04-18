@@ -51,9 +51,15 @@ async def text_to_speech(request: TTSRequest):
                 )
             apply_mood(engine, request.mood)
 
-        # Terapkan parameter kustom
+        # Terapkan parameter kustom (after mood, so they override)
         if request.speed:
             engine.set_speed(request.speed)
+        if request.stability is not None:
+            engine.set_stability(request.stability)
+        if request.similarity_boost is not None:
+            engine.set_similarity_boost(request.similarity_boost)
+        if request.style is not None:
+            engine.set_style(request.style)
 
         # Generate audio
         audio_bytes = engine.synthesize(request.text)

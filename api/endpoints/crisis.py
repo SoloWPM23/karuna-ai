@@ -40,10 +40,17 @@ async def analyze_crisis_endpoint(request: CrisisRequest):
 
         result = analyze_crisis(request.text, emotion_objs)
 
+        d = result.detail or {}
         return CrisisResponse(
             level=result.level,
             score=result.score,
             triggers=result.triggers,
+            layer1_level=d.get("l1_level"),
+            layer1_confidence=d.get("l1_conf"),
+            layer2_label=d.get("l2_label"),
+            layer2_confidence=d.get("l2_conf"),
+            layer3_score=d.get("l3_score"),
+            layer3_patterns=d.get("l3_patterns"),
             detail=result.detail
         )
 

@@ -37,6 +37,9 @@ async def get_summary(session_id: str):
         "summary": orch.summary.paragraf,
         "flag": orch.summary.flag,
         "flag_reasoning": orch.summary.flag_reasoning,
+        "pesan_penutup": orch.summary.pesan_penutup,
         "tren_distress": orch.summary.tren_distress,
+        "distress_awal": orch.summary.distress_awal,
+        "distress_akhir": orch.summary.distress_akhir,
         "jumlah_pesan": orch.summary.jumlah_pesan
     }
