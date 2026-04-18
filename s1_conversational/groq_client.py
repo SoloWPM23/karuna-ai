@@ -7,8 +7,18 @@ import threading
 
 load_dotenv()
 
-client = Groq(api_key=os.getenv("GROQ_API_KEY"))
+_client = None
 _CLIENT_LOCK = threading.Lock()
+
+
+def _get_client() -> Groq:
+    global _client
+    if _client is None:
+        api_key = os.getenv("GROQ_API_KEY")
+        if not api_key:
+            raise RuntimeError("GROQ_API_KEY environment variable is not set")
+        _client = Groq(api_key=api_key)
+    return _client
 
 # Model default - bisa diganti sesuai kebutuhan
 DEFAULT_MODEL = "llama-3.3-70b-versatile"
@@ -39,7 +49,7 @@ def generate_content_safe(
     full_messages = [{"role": "system", "content": system_prompt}] + messages
 
     with _CLIENT_LOCK:
-        response = client.chat.completions.create(
+        response = _get_client().chat.completions.create(
             model=model,
             messages=full_messages,
             temperature=temperature,
