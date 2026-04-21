@@ -7,7 +7,6 @@ import tempfile
 import threading
 from typing import Optional
 import numpy as np
-import sounddevice as sd
 from scipy.io import wavfile
 from elevenlabs.client import ElevenLabs
 from dotenv import load_dotenv
@@ -17,6 +16,21 @@ load_dotenv()
 # ── Eleven Labs client untuk STT API ──────────────────────────────────────
 _client: Optional[ElevenLabs] = None
 _LOCK = threading.Lock()
+
+
+def _get_sounddevice():
+    """Import sounddevice only when microphone features are used."""
+    try:
+        import sounddevice as sd  # type: ignore
+    except OSError as exc:
+        raise RuntimeError(
+            "PortAudio library not found. Microphone recording features are unavailable in this environment."
+        ) from exc
+    except ImportError as exc:
+        raise RuntimeError(
+            "sounddevice is not installed. Microphone recording features are unavailable in this environment."
+        ) from exc
+    return sd
 
 
 def _get_client() -> ElevenLabs:
@@ -60,6 +74,7 @@ class AudioRecorder:
 
     def start(self):
         """Mulai merekam audio."""
+        sd = _get_sounddevice()
         self.frames = []
         self.recording = True
         self._stream = sd.InputStream(
@@ -187,6 +202,8 @@ def record_and_transcribe(duration: float = 5.0, language: str = "id") -> str:
         Teks hasil transkripsi
     """
     print(f"[STT] Recording for {duration}s...")
+
+    sd = _get_sounddevice()
 
     # Rekam audio
     audio_data = sd.rec(
